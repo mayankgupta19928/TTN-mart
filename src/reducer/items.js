@@ -4,15 +4,17 @@ const initialState = {
     quantityById: {},
     priceById:{},
     stockById:{},
-    totalValue:0
+    totalValue:0,
 }
 
 const addedIds = (state = initialState.addedIds, action) => {
     switch (action.type) {
         case 'AdToCart':
             if (state.indexOf(action.payload) !== -1) {
+                // console.log('001');
                 return state
             }
+            // console.log('001');
             return [ ...state, action.payload ]
         default:
             return state
@@ -26,9 +28,10 @@ const quantityById = (state = initialState.quantityById, action) => {
             // const stateQty = state.payload.name;
             const stateQty = ((state || {}).payload || {}).name;
             // const val = state.getNestedValue('qty');
-            console.log(`get All qty = ${ stateQty}`);
-            console.log('state condition + = ', state);
-            if(state[payload] < stock) {
+            // console.log(`get All qty = ${ stateQty}`);
+            // console.log('state condition + = ', state);
+            // console.log('002');
+            if(state[payload] < stock && state[payload] > 0  ) {
                 return {
                     ...state,
                     [payload]: (state[payload] || 1) + 1
@@ -50,6 +53,7 @@ const priceId = (state = initialState.priceById, action) => {
     switch (action.type) {
         case 'AdToCart':
             const { price,payload } = action;
+            // console.log('003');
             // const getPr = {[payload]: price};
             return { ...state, [payload] : price  }
         default:
@@ -62,13 +66,14 @@ const stockId = (state = initialState.stockById, action) => {
         case 'AdToCart':
             const { stock,payload } = action;
             // const getPr = {[payload]: price};
+            // console.log('004');
             return { ...state, [payload] : stock  }
         default:
             return state
     }
 }
 
-    const totalVal = (state = initialState, action) => {
+    function totalVal (state = initialState, action) {
         switch (action.type) {
             case 'AdToCart':
                     const { price,payload } = action;
@@ -77,10 +82,12 @@ const stockId = (state = initialState.stockById, action) => {
                 const data = { ...state.totalValue };
                 const getData = parseInt([data.total]);
                 var qtyprice = 0;
+                // console.log('005');
+                // console.log('dd== '+state.addedIds);
 
                 state.addedIds.map((id)=>{
 
-                    qtyprice +=   (state.quantityById[id] +1) * state.priceById[id];
+                    qtyprice +=   (state.quantityById[id] ) * state.priceById[id];
                     console.log('qty = '+state.quantityById[id]+' price= '+ state.priceById[id] +' qtyprice= '+qtyprice);
 
 
@@ -91,16 +98,27 @@ const stockId = (state = initialState.stockById, action) => {
         }
     }
 
+
 const removeQtyById = (state, action,stateQty = state.quantityById) => {
     switch (action.type) {
         case 'removeToCart':
             const { payload } = action;
             // debugger;
-            const decreseQty = (parseInt(state.quantityById[payload]) - 1);
+            var decreseQty = (parseInt(state.quantityById[payload]) );
+            if( decreseQty > 0  ) {
+                var decreseQty = (parseInt(state.quantityById[payload]) - 1);
+                console.log('Descrease Qty 2 = '+ decreseQty +' stock'+state[payload]);
+
+            }
+            else{
+                var decreseQty = (parseInt(state.quantityById[payload]) );
+                console.log('Descrease Qty 2 = '+ decreseQty +' stock'+state[payload]);
+            }
             // console.log('Descrease Qty  = '+ decreseQty );
             // console.log('removeToCart = '+ JSON.stringify(state) );
             // console.log('State Check  = '+ state.quantityById[payload] );
             // console.log('state condition - = ', state);
+            // console.log('006');
             let newState = { ...state };
             const get_Price = newState.priceById[payload];
             const Total = newState.totalValue['total'];
@@ -117,7 +135,7 @@ const removeQtyById = (state, action,stateQty = state.quantityById) => {
 
 
             });
-            console.log(' qtyprice= '+qtyprice);
+            // console.log(' qtyprice= '+qtyprice);
             newState.totalValue['total'] = qtyprice;
 
 
@@ -143,7 +161,8 @@ const Item = (state=initialState , action) =>
                 quantityById: quantityById(state.quantityById, action),
                 priceById: priceId(state.priceById, action),
                 stockById: stockId(state.stockById, action),
-                totalValue: totalVal(state, action)
+                totalValue: totalVal(state, action),
+
             };
 
 
@@ -169,7 +188,9 @@ const Item = (state=initialState , action) =>
         }
         default:
         {
+
             return state;
+
         }
 
     }

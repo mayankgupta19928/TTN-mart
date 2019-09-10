@@ -3,7 +3,7 @@ import Item from './items';
 
 const Reducers = combineReducers({
 
-    Item: Item
+    Item: Item,
 
 })
 

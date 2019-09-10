@@ -25,7 +25,7 @@ const leftSidebar =
 const RightSidebar =
     {
 
-        width:'39%',
+        // width:'39%',
         // float:'right'
     }
 
@@ -34,31 +34,53 @@ class Item extends React.Component {
 
     render()
     {
+        var qtyprice = 0 ;
+
+        this.props.AddtoCart.addedIds.map((id)=>{
+
+            qtyprice +=   (this.props.AddtoCart.quantityById[id] ) * this.props.AddtoCart.priceById[id];
+
+
+            // console.log('qty = '+this.props.AddtoCart.quantityById[id]+' price= '+ this.props.AddtoCart.priceById[id] +' qtyprice= '+qtyprice);
+
+        });
+        // console.log('jjjj',qtyprice);
+
         var ValueDe =0;
         const getItemArray = [{'name':'Tomato','price':'12','stock':13},{'name':'Potato','price':'15','stock':19},{'name':'Onion','price':'10','stock':22} ,{'name':'Honey','price':'30','stock':24}];
 
-        // console.log(this.props.AddtoCart);
-        console.log(this.props);
+
         return (
-            <div >
+            <React.Fragment>
                 <h2 style={Header}>  TTN Mart </h2>
                 <div style={{width:'100%'}}>
-                <text style={leftSidebar}>
+                <React.Fragment style={leftSidebar}>
                     <table>
                         <tr>
                         <tbody>
-                        { getItemArray.map((item , i)=> <td key={i} style={martBody}>
+                        { getItemArray.map((item , i)=> {
+                            // console.log('quantityById+ '+this.props.AddtoCart.quantityById[item.name]);
+                            // console.log(('MinusData = '+ parseInt((this.props.AddtoCart.stockById[item.name]) || 0 ) +'-'+ parseInt((this.props.AddtoCart.quantityById[item.name]) || 0 ) ));
+
+                            return (
+
+                            <td key={i} style={martBody}>
                         <text style={getItem}>
                             <p> {item['name']} </p>
-                            <p>${item['price']}  </p>
-                            <p> In Stock({item['stock']} ) </p>
+                            <p>${item['price']} {}  </p>
+                            <p id={item['name']}> In Stock ( {
+
+                                // (  (  ( parseInt((this.props.AddtoCart.stockById[item.name]) ) - parseInt((this.props.AddtoCart.quantityById[item.name])  ) )   != '' ) ? (( parseInt(this.props.AddtoCart.stockById[item.name]) || 0 )- parseInt(( this.props.AddtoCart.quantityById[item.name]) || item['stock'] ) )    :            item['stock']  )
+                                (  (  (this.props.AddtoCart.stockById[item.name]) || item['stock']  ) - parseInt((this.props.AddtoCart.quantityById[item.name]) || 0 ) )
+
+                            } ) </p>
                             <button onClick={() => this.props.AddItem(item['name'] , item['price'], item['stock'])}> Add To Cart</button>
                         </text>
-                        </td>)                }
+                        </td>  ); } )                }
                         </tbody>
                         </tr>
                     </table>
-                </text>
+                </React.Fragment>
 
                 <text style={RightSidebar}>
                     {
@@ -70,7 +92,7 @@ class Item extends React.Component {
                         //     console.log('Stock check = '+ JSON.stringify(stock) + stock);
                         var ValueDe =+ (qty*price);
                         return (
-                            <text>
+                            <text >
                                 <p> Name:     {id}  ,  <button   onClick={() => this.props.remItem(id)}> - </button> Qty : {qty}  <button  onClick={() => this.props.AddItem(id , price,stock)}> + </button> , Total value : {qty*price}  </p>
                             </text>
 
@@ -81,7 +103,14 @@ class Item extends React.Component {
                     }
 
                 </text>
-                    <div> Total Value { this.props.AddtoCart.totalValue['total']} </div>
+                    <div> Total Value {
+                        qtyprice
+                        // this.props.AddtoCart.totalValue['total'];
+
+
+
+                         }
+                    </div>
                 </div>
                 {/*{*/}
                 {/*        this.props.AddtoCart.map(*/}
@@ -93,14 +122,15 @@ class Item extends React.Component {
                 {/*        )*/}
 
                 {/*}*/}
-            </div>
+            </React.Fragment>
         );
     }
 }
 
 function mapStateToProps (state)
 {
-    console.log('Sate', state)
+    console.log('Sate', state.Item)
+
     return  {
         AddtoCart : state.Item
     }
